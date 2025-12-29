@@ -5,6 +5,7 @@ pipeline {
         FRONTEND_IMAGE = "frontend-app"
         BACKEND_IMAGE  = "backend-app"
         DOCKER_CRED    = "docker-cred"
+        SCANNER_HOME= tool 'sonar-scanner'
     }
 
     stages {
@@ -16,23 +17,10 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('Sonarqube Analysis') {
             steps {
-                withCredentials([string(
-                    credentialsId: 'Sonar-token',
-                    variable: 'SONAR_TOKEN'
-                )]) {
-                    script {
-                        def scannerHome = tool 'sonar-scanner'
-
-                        sh """
-                        ${scannerHome}/bin/sonar-scanner \
-                        -Dsonar.projectKey=nodejs-docker-app \
-                        -Dsonar.sources=frontend,backend \
-                        -Dsonar.host.url=http://SONARQUBE_IP:9000 \
-                        -Dsonar.login=${SONAR_TOKEN}
-                        """
-                    }
+                withSonarQubeEnv('sonar-token') {
+                    sh "$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=node-app -Dsonar.projectName=node-app"
                 }
             }
         }
