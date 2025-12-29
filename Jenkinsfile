@@ -4,7 +4,7 @@ pipeline {
     environment {
         FRONTEND_IMAGE = "frontend-app"
         BACKEND_IMAGE  = "backend-app"
-        dockerCred = "docker-cred"
+        DOCKER_CRED    = "docker-cred"
     }
 
     stages {
@@ -54,7 +54,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: ${dockerCred},
+                    credentialsId: env.DOCKER_CRED,
                     usernameVariable: 'DOCKERHUB_USER',
                     passwordVariable: 'DOCKERHUB_PASS'
                 )]) {
